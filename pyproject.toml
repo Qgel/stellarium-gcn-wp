@@ -1,0 +1,17 @@
+[tool.poetry]
+name = "stellarium-gcn-wp"
+version = "0.1.0"
+description = ""
+authors = ["Mirko Kugelmeier <mirko.kugelmeier@rwth-aachen.de>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.11"
+gcn-kafka = "*"
+
+[tool.poetry.scripts]
+stellarium-gcn-wp = "stellarium_gcn_wp.main:main"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"

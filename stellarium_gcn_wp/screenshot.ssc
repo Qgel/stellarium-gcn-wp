@@ -1,0 +1,90 @@
+// Ref: https://stellarium.org/doc/23.0/scripting.html
+// Major parts of this lifted from https://github.com/Arnavion/sway-wallpaper-stellarium
+
+core.debug("[SGW] init");
+
+var window_width = $image_width;
+var window_height = $image_height;
+
+var lat = $observer_lat
+var lon = $observer_lon
+
+var ra = $ra;
+var dec = $dec;
+var day_tjd = $tjd;
+var sod = $sod;
+
+var fov = $fov;
+var ra_view_offset = $ra_view_offset;
+var dec_view_offset = $dec_view_offset;
+
+var color = "$marker_color"
+
+var evt_str = "$evt_str"
+var date_str = "$date_str"
+var pos_str = "$pos_str"
+var en_str = "$en_str"
+
+core.setGuiVisible(false);
+core.setMinFps(1);
+core.setMaxFps(1);
+core.setObserverLocation(lon, lat, 0, 0, "", "");
+core.setProjectionMode("ProjectionCylinder");
+core.setSkyCulture("modern");
+
+core.setTimeRate(0);
+core.setMJDay(day_tjd + 40000 + sod / (24*60*60))
+core.moveToRaDecJ2000(ra + ra_view_offset, dec + dec_view_offset, 0);
+
+MarkerMgr.deleteAllMarkers();
+MarkerMgr.markerEquatorial(ra, dec, true, true, "cross", color, 6.0);
+
+LabelMgr.deleteAllLabels();
+LabelMgr.labelEquatorial(evt_str, ra+3, dec-3, true, 14, color, "E")
+LabelMgr.labelEquatorial(date_str, ra+3, dec +0, true, 14, color, "E")
+LabelMgr.labelEquatorial(pos_str, ra+3, dec + 3, true, 14, color, "E")
+LabelMgr.labelEquatorial(en_str, ra+3, dec + 6, true, 14, color, "E")
+
+StelMovementMgr.zoomTo(fov, 0);
+
+LandscapeMgr.setCurrentLandscapeID("zero");
+LandscapeMgr.setFlagAtmosphere(false);
+LandscapeMgr.setFlagCardinalPoints(false);
+LandscapeMgr.setFlagFog(false);
+LandscapeMgr.setFlagIllumination(false);
+LandscapeMgr.setFlagLabels(false);
+LandscapeMgr.setFlagLandscape(false);
+
+SporadicMeteorMgr.setFlagShow(false);
+SporadicMeteorMgr.setZHR(0);
+
+SolarSystem.setFlagHints(false);
+SolarSystem.setFlagLabels(true);
+SolarSystem.setFlagLightTravelTime(true);
+SolarSystem.setFlagOrbits(false);
+SolarSystem.setFlagShowObjSelfShadows(true);
+SolarSystem.setFlagTrails(false);
+SolarSystem.setFlagUseObjModels(true);
+
+SolarSystem.setFlagMoonScale(false);
+SolarSystem.setFlagPlanetScale(false);
+SolarSystem.setFlagSunScale(false);
+
+StarMgr.setFlagLabels(false);
+
+StelSkyDrawer.setFlagStarMagnitudeLimit(false);
+StelSkyDrawer.setFlagStarSpiky(false);
+StelSkyDrawer.setFlagTwinkle(false);
+StelSkyDrawer.setFlagLuminanceAdaptation(false)
+StelSkyDrawer.setLightPollutionLuminance(0);
+
+core.debug("[SGW] render_loop");
+while (core.getScreenWidth() != window_width || core.getScreenHeight() != window_height) {
+    core.debug("Waiting for window size...");
+    core.wait(1);
+}
+core.debug("[SGW] screen_sized");
+core.wait(10);
+core.screenshot("screenshot", false, "", true, "png");
+core.debug("[SGW] done");
+core.quitStellarium();
